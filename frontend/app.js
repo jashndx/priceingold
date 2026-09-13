@@ -97,10 +97,19 @@ function setupEventListeners() {
   });
 }
 
+// Universal API Fetcher supporting both /api/... and /...
+async function apiFetch(path) {
+  try {
+    const res = await fetch(`/api${path}`);
+    if (res.ok) return res;
+  } catch (e) {}
+  return await fetch(path);
+}
+
 // Load popular stocks
 async function loadPopularStocks() {
   try {
-    const res = await fetch("/api/popular");
+    const res = await apiFetch("/popular");
     const json = await res.json();
     if (json.popular) {
       popularPillsContainer.innerHTML = "";
@@ -127,7 +136,7 @@ async function handleSearch(query) {
     return;
   }
   try {
-    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    const res = await apiFetch(`/search?q=${encodeURIComponent(query)}`);
     const json = await res.json();
     renderDropdown(json.results || []);
   } catch (err) {
@@ -175,10 +184,14 @@ function selectStock(symbol) {
 async function fetchStockInGold(symbol, period) {
   showLoading(true);
   try {
-    const res = await fetch(`/api/stock-gold?symbol=${encodeURIComponent(symbol)}&period=${period}`);
+    const res = await apiFetch(`/stock-gold?symbol=${encodeURIComponent(symbol)}&period=${period}`);
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || "Failed to retrieve data");
+      let errDetail = "Failed to retrieve data";
+      try {
+        const err = await res.json();
+        errDetail = err.detail || errDetail;
+      } catch (e) {}
+      throw new Error(errDetail);
     }
     const data = await res.json();
     currentData = data;
