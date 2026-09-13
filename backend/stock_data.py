@@ -11,7 +11,17 @@ _data_cache: Dict[str, dict] = {}
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 STOCK_DIR_PATH = os.path.join(DIR_PATH, "stock_directory.json")
 
+try:
+    from backend.stock_catalog import STOCK_CATALOG
+except ImportError:
+    try:
+        from .stock_catalog import STOCK_CATALOG
+    except Exception:
+        STOCK_CATALOG = []
+
 def load_stock_directory() -> List[dict]:
+    if STOCK_CATALOG:
+        return list(STOCK_CATALOG)
     try:
         with open(STOCK_DIR_PATH, "r", encoding="utf-8") as f:
             return json.load(f)

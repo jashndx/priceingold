@@ -22,8 +22,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FRONTEND_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PUBLIC_DIR = os.path.join(BASE_DIR, "public")
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
+# Route decorators supporting both with and without /api prefix
+@app.get("/search")
 @app.get("/api/search")
 def api_search(q: str = Query("", description="Search ticker or company name")):
     """Search for Indian stocks by ticker or company name."""
@@ -33,6 +37,7 @@ def api_search(q: str = Query("", description="Search ticker or company name")):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/popular")
 @app.get("/api/popular")
 def api_popular():
     """Return popular Indian stocks for quick selection."""
@@ -48,6 +53,7 @@ def api_popular():
             popular_list.append(catalog_map[sym])
     return {"popular": popular_list}
 
+@app.get("/stock-gold")
 @app.get("/api/stock-gold")
 def api_stock_gold(
     symbol: str = Query("RELIANCE.NS", description="Stock symbol"),
@@ -63,15 +69,40 @@ def api_stock_gold(
         raise HTTPException(status_code=500, detail=f"Data retrieval failed: {str(e)}")
 
 # Mount static frontend
-if os.path.exists(FRONTEND_DIR):
-    app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+static_dir = PUBLIC_DIR if os.path.exists(PUBLIC_DIR) else FRONTEND_DIR
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/")
+@app.get("/index.html")
 def serve_index():
-    index_file = os.path.join(FRONTEND_DIR, "index.html")
-    if os.path.exists(index_file):
-        return FileResponse(index_file)
-    return {"message": "Server active. Frontend directory not found."}
+    for f in [
+        os.path.join(PUBLIC_DIR, "index.html"),
+        os.path.join(FRONTEND_DIR, "index.html"),
+    ]:
+        if os.path.exists(f):
+            return FileResponse(f)
+    return {"message": "Server active."}
+
+@app.get("/styles.css")
+def serve_css():
+    for f in [
+        os.path.join(PUBLIC_DIR, "styles.css"),
+        os.path.join(FRONTEND_DIR, "styles.css"),
+    ]:
+        if os.path.exists(f):
+            return FileResponse(f, media_type="text/css")
+    raise HTTPException(status_code=404, detail="styles.css not found")
+
+@app.get("/app.js")
+def serve_js():
+    for f in [
+        os.path.join(PUBLIC_DIR, "app.js"),
+        os.path.join(FRONTEND_DIR, "app.js"),
+    ]:
+        if os.path.exists(f):
+            return FileResponse(f, media_type="application/javascript")
+    raise HTTPException(status_code=404, detail="app.js not found")
 
 if __name__ == "__main__":
     uvicorn.run("backend.app:app", host="127.0.0.1", port=8000, reload=True)
