@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indian Equities Priced in Gold (mg/share) — Research Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Clean Minimalist Header -->
+    <header class="navbar">
+      <div class="nav-left">
+        <h1 class="nav-title">Indian Equities in Gold</h1>
+      </div>
+      <div class="nav-right" id="goldSpotContainer">
+        <span class="gold-spot-label">24K Gold Benchmark:</span>
+        <span class="gold-spot-val" id="headerGoldSpot">Loading...</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- Search & Controls -->
+      <section class="search-section">
+        <div class="search-wrapper">
+          <input 
+            type="text" 
+            id="stockSearchInput" 
+            placeholder="Search company name or ticker (e.g. Reliance, TCS, HDFC Bank, Nifty 50)..." 
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="clearSearchBtn" class="clear-btn" style="display:none;">✕</button>
+          <div id="searchDropdown" class="search-dropdown" style="display:none;"></div>
+        </div>
+
+        <div class="popular-row">
+          <span class="popular-label">Quick Select:</span>
+          <div class="popular-pills" id="popularPills"></div>
+        </div>
+      </section>
+
+      <!-- Loading Bar -->
+      <div id="loadingIndicator" class="loading-state" style="display: none;">
+        <span class="loading-spinner"></span>
+        <span>Fetching market data...</span>
+      </div>
+
+      <!-- Main Overview Panel -->
+      <section class="overview-panel">
+        <div class="stock-title-row">
+          <div>
+            <div class="stock-main-line">
+              <h2 id="companyName">Reliance Industries Ltd</h2>
+              <span class="ticker-badge" id="companyTicker">RELIANCE</span>
+            </div>
+            <div class="stock-meta-line" id="stockMeta">NSE: RELIANCE.NS &bull; Energy / Conglomerate</div>
+          </div>
+
+          <div class="timeframe-group">
+            <button class="tf-btn" data-period="1m">1M</button>
+            <button class="tf-btn" data-period="6m">6M</button>
+            <button class="tf-btn active" data-period="1y">1Y</button>
+            <button class="tf-btn" data-period="3y">3Y</button>
+            <button class="tf-btn" data-period="5y">5Y</button>
+            <button class="tf-btn" data-period="max">MAX</button>
+          </div>
+        </div>
+
+        <!-- Metrics Row (Simplified, strictly mg/share focused) -->
+        <div class="metrics-row">
+          <div class="metric-block highlight">
+            <span class="metric-label">Price in Gold (24K)</span>
+            <div class="metric-value">
+              <span id="metricGoldMg">--</span> <span class="metric-unit">mg/share</span>
+            </div>
+            <span class="metric-sub" id="metricGoldMgDelta">-- over selected period</span>
+          </div>
+
+          <div class="metric-block">
+            <span class="metric-label">Real Return (in Gold)</span>
+            <div class="metric-value" id="metricRealReturn">--%</div>
+            <span class="metric-sub" id="metricRealVerdict">Sound money return</span>
+          </div>
+
+          <div class="metric-block">
+            <span class="metric-label">Nominal Stock Price</span>
+            <div class="metric-value" id="metricNominalInr">₹--</div>
+            <span class="metric-sub" id="metricNominalReturn">--% in INR</span>
+          </div>
+
+          <div class="metric-block">
+            <span class="metric-label">Gold Price (per gram)</span>
+            <div class="metric-value" id="metricGoldPerGram">₹--</div>
+            <span class="metric-sub" id="metricGoldReturn">--% in INR</span>
+          </div>
+        </div>
+
+        <!-- Focused Chart: Toggle between mg/share and Real INR -->
+        <div class="chart-wrapper">
+          <div class="chart-meta">
+            <div>
+              <h3 class="chart-heading" id="chartHeading">Historical Price in Gold (mg/share)</h3>
+              <span class="chart-subheading" id="chartSubheading">Milligrams of 24K pure gold per share</span>
+            </div>
+            <div class="chart-controls">
+              <div class="chart-toggle-group">
+                <button class="chart-toggle-btn active" data-chart="mg_share">mg / share</button>
+                <button class="chart-toggle-btn" data-chart="real_inr">Real INR</button>
+              </div>
+              <span class="chart-date-range" id="chartDateRange">--</span>
+            </div>
+          </div>
+          <div class="chart-area">
+            <canvas id="mainChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Research Breakdown Table -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Indicator</th>
+                <th id="thStartDate">Start</th>
+                <th id="thEndDate">Current</th>
+                <th>Net Change</th>
+                <th>Real Impact</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Indian Equities / Gold Ratio Research Tool &bull; Data from NSE & Global 24K Spot &bull; For research and educational purposes only</span>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
