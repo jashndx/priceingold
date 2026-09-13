@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/static/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -19,7 +18,8 @@
         <h1 class="nav-title">Indian Equities in Gold</h1>
       </div>
       <div class="nav-right" id="goldSpotContainer">
-        <span class="gold-spot-label">24K Gold Benchmark:</span>
+        <button class="info-trigger-btn" id="openModalBtn" title="How this tool works">? How it works</button>
+        <span class="gold-spot-label">24K Gold:</span>
         <span class="gold-spot-val" id="headerGoldSpot">Loading...</span>
       </div>
     </header>
@@ -144,6 +144,55 @@
     </footer>
   </div>
 
-  <script src="/static/app.js"></script>
+  <!-- Quick Explainer Modal -->
+  <div class="modal-overlay" id="infoModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="modal-gold-icon">⚜️</span>
+          <h2>What is this tool?</h2>
+        </div>
+        <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="modal-intro">
+          This research tool prices Indian stocks in <strong>pure physical 24K Gold</strong> instead of nominal Indian Rupees (₹).
+        </p>
+
+        <div class="modal-feature-list">
+          <div class="modal-feature-item">
+            <span class="feature-bullet">1</span>
+            <div>
+              <strong>The Fiat Illusion</strong>
+              <p>In Rupees, almost every stock looks like it's going up over time simply because more money is printed and the currency loses purchasing power.</p>
+            </div>
+          </div>
+
+          <div class="modal-feature-item">
+            <span class="feature-bullet">2</span>
+            <div>
+              <strong>True Purchasing Power (mg/share)</strong>
+              <p>Gold cannot be inflated away. Measuring 1 share in <strong>milligrams of Gold</strong> reveals whether a company actually beat currency debasement or just tagged along with inflation.</p>
+            </div>
+          </div>
+
+          <div class="modal-feature-item">
+            <span class="feature-bullet">3</span>
+            <div>
+              <strong>Two Simple Graph Views</strong>
+              <p>Toggle between <strong>mg/share</strong> (Gold valuation) and <strong>Real INR</strong> (Rupee price deflated by Gold to show real purchasing power).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-primary-btn" id="dismissModalBtn">Got it, let's explore</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
 </body>
 </html>

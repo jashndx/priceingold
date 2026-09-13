@@ -40,11 +40,46 @@ const thEndDate = document.getElementById("thEndDate");
 // Chart Canvas
 const chartCanvas = document.getElementById("mainChart");
 
+// Modal elements
+const infoModal = document.getElementById("infoModal");
+const openModalBtn = document.getElementById("openModalBtn");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const dismissModalBtn = document.getElementById("dismissModalBtn");
+
 document.addEventListener("DOMContentLoaded", () => {
   setupEventListeners();
+  setupModal();
   loadPopularStocks();
   fetchStockInGold(currentSymbol, currentPeriod);
 });
+
+function openModal() {
+  if (infoModal) infoModal.style.display = "flex";
+}
+
+function closeModal() {
+  if (infoModal) infoModal.style.display = "none";
+  localStorage.setItem("hasSeenGoldIntro", "true");
+}
+
+function setupModal() {
+  if (openModalBtn) openModalBtn.addEventListener("click", openModal);
+  if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+  if (dismissModalBtn) dismissModalBtn.addEventListener("click", closeModal);
+  
+  if (infoModal) {
+    infoModal.addEventListener("click", (e) => {
+      if (e.target === infoModal) closeModal();
+    });
+  }
+
+  // Show automatically on first visit
+  if (!localStorage.getItem("hasSeenGoldIntro")) {
+    setTimeout(() => {
+      openModal();
+    }, 450);
+  }
+}
 
 function setupEventListeners() {
   searchInput.addEventListener("input", (e) => {
